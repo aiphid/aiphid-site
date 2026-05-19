@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Diplo Run Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Variables ──────────────────────────────────────────── */
+    :root {
+      --bg: #080808;
+      --card: #111111;
+      --card2: #141414;
+      --border: #222222;
+      --text: #ffffff;
+      --muted: #888888;
+      --dim: #444444;
+      --accent: #00FF94;
+      --accent-dim: rgba(0,255,148,0.12);
+      --accent-glow: rgba(0,255,148,0.25);
+      --red: #FF3B30;
+      --red-dim: rgba(255,59,48,0.12);
+      --yellow: #FFD60A;
+      --yellow-dim: rgba(255,214,10,0.08);
+      --blue: #0A84FF;
+      --blue-dim: rgba(10,132,255,0.12);
+      --mono: 'Space Mono', 'Courier New', monospace;
+      --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: var(--sans);
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    button { cursor: pointer; font-family: inherit; }
+
+    /* ─── App Shell ──────────────────────────────────────────── */
+    #app {
+      position: relative;
+      width: 100%;
+      max-width: 390px;
+      height: 100dvh;
+      margin: 0 auto;
+      background: var(--bg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Screen System ──────────────────────────────────────── */
+    #screens {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.28s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.28s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .screen.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+
+    .screen.slide-left {
+      transform: translateX(-40px);
+    }
+
+    /* ─── SCREEN 1: GLASSES HUD ──────────────────────────────── */
+    #screen-hud {
+      background: radial-gradient(ellipse at 50% 38%, rgba(0,255,148,0.04) 0%, #090909 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Scanlines */
+    #screen-hud::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.07) 3px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Vignette */
+    #screen-hud::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(0,0,0,0.72) 100%);
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* HUD Header */
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 24px 0;
+      position: relative;
+      z-index: 60;
+    }
+
+    .hud-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.25; transform: scale(0.8); }
+    }
+
+    .hud-brand {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--dim);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    /* HUD Distance Hero */
+    .hud-hero {
+      text-align: center;
+      position: relative;
+      z-index: 60;
+      padding: 4px 0 0;
+    }
+
+    .hud-dist-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      color: rgba(0,255,148,0.5);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .hud-distance {
+      font-family: var(--mono);
+      font-size: 86px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+      text-shadow:
+        0 0 20px rgba(0,255,148,0.5),
+        0 0 50px rgba(0,255,148,0.2),
+        0 0 100px rgba(0,255,148,0.08);
+      letter-spacing: -3px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hud-dist-unit {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(0,255,148,0.55);
+      margin-left: 2px;
+      letter-spacing: 0;
+    }
+
+    /* HUD Stats Row */
+    .hud-stats-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 28px;
+      position: relative;
+      z-index: 60;
+    }
+
+    .hud-stat {
+      text-align: center;
+      flex: 1;
+    }
+
+    .hud-stat-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .hud-stat-value {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 12px rgba(255,255,255,0.15);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hud-stat-unit {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      margin-left: 1px;
+    }
+
+    .hud-sep {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .hud-hr-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .hud-heart {
+      font-size: 13px;
+      display: inline-block;
+      animation: heartbeat 0.88s ease-in-out infinite;
+      color: var(--red);
+      filter: drop-shadow(0 0 4px var(--red));
+    }
+
+    @keyframes heartbeat {
+      0%   { transform: scale(1); }
+      10%  { transform: scale(1.35); }
+      20%  { transform: scale(1); }
+      35%  { transform: scale(1.18); }
+      50%  { transform: scale(1); }
+      100% { transform: scale(1); }
+    }
+
+    /* HUD Nav Cue */
+    .hud-nav-cue {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 60;
+      padding: 0 24px;
+    }
+
+    .hud-nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #fff;
+      background: rgba(0,255,148,0.08);
+      border: 1px solid rgba(0,255,148,0.28);
+      padding: 7px 18px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+    }
+
+    .hud-nav-pill.visible { opacity: 1; }
+
+    .nav-arrow {
+      color: var(--accent);
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    /* HUD Music */
+    .hud-music {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 16px;
+      padding: 11px 16px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      position: relative;
+      z-index: 60;
+      overflow: hidden;
+    }
+
+    .hud-music::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .music-note-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(0,255,148,0.08);
+      flex-shrink: 0;
+    }
+
+    .music-note {
+      font-size: 16px;
+      animation: note-bounce 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes note-bounce {
+      0%   { transform: rotate(-10deg) scale(1); }
+      100% { transform: rotate(10deg) scale(1.12); }
+    }
+
+    .music-info { flex: 1; min-width: 0; }
+
+    .music-artist {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .music-track {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 5px;
+    }
+
+    .music-bar {
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .music-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 1px;
+      animation: bar-progress 180s linear forwards;
+      width: 0;
+    }
+
+    @keyframes bar-progress {
+      from { width: 22%; }
+      to   { width: 100%; }
+    }
+
+    /* HUD Neural Capture */
+    .hud-capture-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 0 20px;
+      position: relative;
+      z-index: 60;
+    }
+
+    .neural-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+
+    .neural-btn::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .neural-btn::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .neural-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+
+    .neural-inner {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 16px rgba(255,255,255,0.4);
+    }
+
+    .neural-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ─── SCREEN 2: COMPANION APP ────────────────────────────── */
+    #screen-run {
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg);
+      scrollbar-width: none;
+    }
+    #screen-run::-webkit-scrollbar { display: none; }
+
+    .run-statusbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .statusbar-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .signal-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.5px;
+      height: 11px;
+    }
+
+    .signal-bars span {
+      width: 3px;
+      background: #fff;
+      border-radius: 1px;
+    }
+
+    .signal-bars span:nth-child(1) { height: 3px; }
+    .signal-bars span:nth-child(2) { height: 5px; }
+    .signal-bars span:nth-child(3) { height: 8px; }
+    .signal-bars span:nth-child(4) { height: 11px; opacity: 0.3; }
+
+    .battery-bar {
+      width: 22px;
+      height: 11px;
+      border: 1.5px solid rgba(255,255,255,0.8);
+      border-radius: 2px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 1.5px;
+    }
+
+    .battery-bar::after {
+      content: '';
+      position: absolute;
+      right: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 5px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 0 1px 1px 0;
+    }
+
+    .battery-fill-bar {
+      height: 100%;
+      width: 65%;
+      background: #fff;
+      border-radius: 1px;
+    }
+
+    .run-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px 4px;
+    }
+
+    .run-header-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .run-live-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--red);
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(255,59,48,0.3);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .run-live-pill .live-dot {
+      background: var(--red);
+      box-shadow: 0 0 5px var(--red);
+      width: 5px;
+      height: 5px;
+    }
+
+    /* Hero distance */
+    .run-hero {
+      text-align: center;
+      padding: 4px 22px 14px;
+    }
+
+    .run-distance-big {
+      font-family: var(--mono);
+      font-size: 92px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: -4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .run-dist-unit {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0;
+    }
+
+    .run-dist-sub {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin: 0 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .stat-cell {
+      padding: 13px 6px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-cell-num {
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+
+    .stat-cell-label {
+      font-size: 8.5px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Section wrapper */
+    .run-section {
+      margin: 10px 14px 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 13px 14px;
+    }
+
+    .section-title {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    /* Club members */
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+    }
+    .member-row + .member-row { border-top: 1px solid rgba(255,255,255,0.04); }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      border: 1.5px solid;
+    }
+
+    .av-kai   { background: rgba(0,255,148,0.12);   border-color: rgba(0,255,148,0.35);   color: var(--accent); }
+    .av-marta { background: rgba(255,59,48,0.12);   border-color: rgba(255,59,48,0.35);   color: var(--red); }
+    .av-dev   { background: rgba(10,132,255,0.12);  border-color: rgba(10,132,255,0.35);  color: var(--blue); }
+    .av-you   { background: rgba(0,255,148,0.12);   border-color: rgba(0,255,148,0.35);   color: var(--accent); }
+    .av-jordan{ background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: var(--muted); }
+
+    .member-info { flex: 1; min-width: 0; }
+    .member-name { font-size: 13px; font-weight: 600; }
+    .member-sub  { font-size: 11px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .member-pace {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .pace-fast    { color: var(--accent); }
+    .pace-similar { color: var(--text); }
+    .pace-slow    { color: var(--muted); }
+
+    /* Segment alert */
+    .segment-card {
+      margin: 10px 14px 0;
+      background: var(--yellow-dim);
+      border: 1px solid rgba(255,214,10,0.22);
+      border-radius: 16px;
+      padding: 13px 14px;
+    }
+
+    .segment-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 5px;
+    }
+
+    .segment-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+
+    .segment-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .segment-sub span { color: var(--accent); font-weight: 700; }
+
+    /* Leaderboard mini */
+    .leaderboard-mini {
+      margin: 10px 14px 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 13px 14px;
+    }
+
+    .lb-mini-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lb-rank {
+      font-family: var(--mono);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .lb-suffix { font-size: 16px; color: var(--muted); }
+
+    .lb-details-text {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .lb-details-text strong { color: var(--text); }
+
+    .lb-details-sub {
+      font-size: 11px;
+      color: var(--dim);
+    }
+
+    /* Run controls */
+    .run-controls {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px 18px;
+    }
+
+    .run-btn {
+      flex: 1;
+      padding: 14px 8px;
+      border-radius: 14px;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    .run-btn:active { transform: scale(0.94); opacity: 0.8; }
+
+    .btn-pause  { background: rgba(255,255,255,0.07); color: var(--text); }
+    .btn-stop   { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,59,48,0.28); }
+    .btn-share  { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,255,148,0.28); }
+
+    /* ─── SCREEN 3: SOCIAL FEED ──────────────────────────────── */
+    #screen-feed {
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg);
+      scrollbar-width: none;
+    }
+    #screen-feed::-webkit-scrollbar { display: none; }
+
+    .feed-header {
+      position: sticky;
+      top: 0;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px 12px;
+      z-index: 40;
+    }
+
+    .feed-title {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+    }
+    .feed-title .diplo { color: var(--accent); }
+
+    .feed-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .member-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .feed-body { padding: 14px; }
+
+    /* Recap card */
+    .recap-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .recap-map-wrap {
+      width: 100%;
+      height: 178px;
+      background: #080E1C;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .route-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-overlay-label {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.15em;
+      background: rgba(0,0,0,0.5);
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .recap-body { padding: 14px 15px; }
+
+    .recap-run-label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .recap-stats-row {
+      display: flex;
+      gap: 28px;
+    }
+
+    .recap-stat-val {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .recap-stat-lbl {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* Feed section label */
+    .feed-section-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    /* Feed items */
+    .feed-item {
+      display: flex;
+      gap: 11px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .feed-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .feed-right { flex: 1; min-width: 0; }
+
+    .feed-top {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      margin-bottom: 3px;
+    }
+
+    .feed-name { font-size: 14px; font-weight: 700; }
+    .feed-time { font-size: 11px; color: var(--muted); }
+
+    .feed-desc { font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+    .feed-desc strong { color: var(--text); }
+
+    .feed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      margin-bottom: 7px;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-pr {
+      background: rgba(255,59,48,0.12);
+      color: var(--red);
+      border: 1px solid rgba(255,59,48,0.28);
+    }
+
+    .badge-seg {
+      background: var(--yellow-dim);
+      color: var(--yellow);
+      border: 1px solid rgba(255,214,10,0.22);
+    }
+
+    .feed-actions {
+      display: flex;
+      gap: 16px;
+    }
+
+    .feed-action {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: color 0.15s;
+      user-select: none;
+    }
+    .feed-action.liked { color: var(--red); }
+
+    /* Share button */
+    .share-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #E1306C 0%, #833AB4 50%, #405DE6 100%);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 0;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .share-btn:active { transform: scale(0.97); opacity: 0.9; }
+    .share-btn.shared { background: rgba(0,255,148,0.1); border: 1px solid var(--accent-glow); color: var(--accent); }
+
+    /* Weekly leaderboard */
+    .lb-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .lb-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lb-card-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .lb-card-week {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .lb-row:last-child { border-bottom: none; }
+
+    .lb-row.lb-you {
+      background: rgba(0,255,148,0.04);
+      border-left: 2px solid var(--accent);
+      padding-left: 13px;
+    }
+
+    .lb-pos {
+      width: 22px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+    }
+    .lb-pos.gold   { color: #FFD700; }
+    .lb-pos.silver { color: #C0C0C0; }
+    .lb-pos.bronze { color: #CD7F32; }
+
+    .lb-av-sm {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .lb-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .lb-name.you-color { color: var(--accent); }
+    .lb-name.dim-color { color: var(--muted); }
+
+    .lb-dist {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .lb-dist.you-color { color: var(--accent); }
+    .lb-dist.dim-color { color: var(--muted); }
+
+    /* ─── BOTTOM TAB BAR ─────────────────────────────────────── */
+    #tab-bar {
+      flex-shrink: 0;
+      height: 60px;
+      display: flex;
+      background: rgba(10,10,10,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 100;
+    }
+
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      background: none;
+      color: var(--dim);
+      transition: color 0.2s ease;
+      padding: 0 0 4px;
+    }
+
+    .tab-btn.active { color: var(--accent); }
+
+    .tab-icon-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab-icon { font-size: 19px; line-height: 1; }
+
+    .tab-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Overlays ───────────────────────────────────────────── */
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9000;
+      transition: opacity 0.06s ease;
+    }
+    #flash.on { opacity: 0.92; }
+
+    #toast {
+      position: fixed;
+      top: 54px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background: rgba(14,14,14,0.95);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 9px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9100;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      white-space: nowrap;
+      backdrop-filter: blur(20px);
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─── Desktop wrapper ────────────────────────────────────── */
+    @media (min-width: 600px) {
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #050505;
+      }
+      #app {
+        border-radius: 44px;
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,0.08),
+          0 24px 48px rgba(0,0,0,0.8),
+          0 64px 120px rgba(0,0,0,0.6);
+        height: min(844px, 90vh);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlays -->
+<div id="flash"></div>
+<div id="toast">📸 Saved to camera roll</div>
+
+<div id="app">
+
+  <div id="screens">
+
+    <!-- ══════════════════════════════════════════════════════════
+         SCREEN 1 — GLASSES HUD
+    ══════════════════════════════════════════════════════════ -->
+    <div class="screen active" id="screen-hud">
+
+      <div class="hud-header">
+        <div class="hud-live-badge">
+          <span class="live-dot"></span>
+          LIVE RUN
+        </div>
+        <div class="hud-brand">META · RAY-BAN</div>
+      </div>
+
+      <div class="hud-hero">
+        <div class="hud-dist-label">DISTANCE</div>
+        <div class="hud-distance">
+          <span id="hud-dist">0.00</span><span class="hud-dist-unit">mi</span>
+        </div>
+      </div>
+
+      <div class="hud-stats-row">
+        <div class="hud-stat">
+          <div class="hud-stat-label">PACE</div>
+          <div class="hud-stat-value">
+            <span id="hud-pace">8:47</span><span class="hud-stat-unit">/mi</span>
+          </div>
+        </div>
+        <div class="hud-sep"></div>
+        <div class="hud-stat">
+          <div class="hud-stat-label">ELAPSED</div>
+          <div class="hud-stat-value" id="hud-time">00:00</div>
+        </div>
+        <div class="hud-sep"></div>
+        <div class="hud-stat">
+          <div class="hud-stat-label">HEART</div>
+          <div class="hud-hr-wrap">
+            <span class="hud-heart">♥</span>
+            <div class="hud-stat-value" id="hud-hr">164</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-nav-cue">
+        <div class="hud-nav-pill" id="nav-pill">
+          <span class="nav-arrow" id="nav-arrow">↰</span>
+          <span id="nav-text">Turn left in 0.3 mi</span>
+        </div>
+      </div>
+
+      <div class="hud-music">
+        <div class="music-note-wrap">
+          <span class="music-note">♪</span>
+        </div>
+        <div class="music-info">
+          <div class="music-artist">DIPLO</div>
+          <div class="music-track">Revolution (live set)</div>
+          <div class="music-bar">
+            <div class="music-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-capture-area">
+        <button class="neural-btn" onclick="triggerCapture()" aria-label="Neural Band Capture">
+          <div class="neural-inner"></div>
+        </button>
+        <div class="neural-label">Neural Band · Capture</div>
+      </div>
+
+    </div><!-- /screen-hud -->
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SCREEN 2 — iOS COMPANION APP
+    ══════════════════════════════════════════════════════════ -->
+    <div class="screen" id="screen-run">
+
+      <!-- Status bar -->
+      <div class="run-statusbar">
+        <span id="run-clock">9:41</span>
+        <div class="statusbar-right">
+          <div class="signal-bars">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="battery-bar"><div class="battery-fill-bar"></div></div>
+        </div>
+      </div>
+
+      <!-- App header -->
+      <div class="run-header">
+        <div class="run-header-title">Diplo Run Club</div>
+        <div class="run-live-pill">
+          <span class="live-dot"></span>LIVE
+        </div>
+      </div>
+
+      <!-- Hero distance -->
+      <div class="run-hero">
+        <div class="run-distance-big">
+          <span id="run-dist">0.00</span><span class="run-dist-unit">mi</span>
+        </div>
+        <div class="run-dist-sub">distance</div>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <div class="stat-cell-num" id="run-pace">8:47</div>
+          <div class="stat-cell-label">Pace/mi</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-cell-num" id="run-hr">164</div>
+          <div class="stat-cell-label">BPM</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-cell-num" id="run-time">00:00</div>
+          <div class="stat-cell-label">Time</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-cell-num">+<span id="run-elev">0</span>ft</div>
+          <div class="stat-cell-label">Elev</div>
+        </div>
+      </div>
+
+      <!-- Running with club -->
+      <div class="run-section">
+        <div class="section-title">Running with 3 club members</div>
+        <div class="member-row">
+          <div class="avatar av-kai">K</div>
+          <div class="member-info">
+            <div class="member-name">Kai Nguyen</div>
+            <div class="member-sub">0.3 mi ahead · Griffith Trail</div>
+          </div>
+          <div class="member-pace pace-fast">8:31</div>
+        </div>
+        <div class="member-row">
+          <div class="avatar av-marta">M</div>
+          <div class="member-info">
+            <div class="member-name">Marta Osei</div>
+            <div class="member-sub">Nearby · same route</div>
+          </div>
+          <div class="member-pace pace-slow">9:15</div>
+        </div>
+        <div class="member-row">
+          <div class="avatar av-dev">D</div>
+          <div class="member-info">
+            <div class="member-name">Dev Patel</div>
+            <div class="member-sub">0.1 mi behind · closing in</div>
+          </div>
+          <div class="member-pace pace-similar">8:52</div>
+        </div>
+      </div>
+
+      <!-- Strava segment alert -->
+      <div class="segment-card">
+        <div class="segment-top">⚡ Strava Segment</div>
+        <div class="segment-name">Griffith Park Loop</div>
+        <div class="segment-sub">
+          Starts in 0.4 mi &nbsp;·&nbsp; PR: 8:23/mi &nbsp;·&nbsp; <span>You can beat it!</span>
+        </div>
+      </div>
+
+      <!-- Leaderboard mini -->
+      <div class="leaderboard-mini">
+        <div class="section-title">Today's Club Standings</div>
+        <div class="lb-mini-row">
+          <div>
+            <span class="lb-rank">#4</span><span class="lb-suffix">th</span>
+          </div>
+          <div>
+            <div class="lb-details-text"><strong>2:12</strong> behind Kai (leader)</div>
+            <div class="lb-details-sub">Dev is 0:48 behind you — keep pushing</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="run-controls">
+        <button class="run-btn btn-pause" id="pause-btn" onclick="togglePause()">⏸ Pause</button>
+        <button class="run-btn btn-stop">⏹ Stop</button>
+        <button class="run-btn btn-share">↗ Share</button>
+      </div>
+
+    </div><!-- /screen-run -->
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         SCREEN 3 — SOCIAL FEED
+    ══════════════════════════════════════════════════════════ -->
+    <div class="screen" id="screen-feed">
+
+      <!-- Sticky header -->
+      <div class="feed-header">
+        <div class="feed-title"><span class="diplo">Diplo's</span> Run Club</div>
+        <div class="feed-subtitle">
+          <span class="member-dot"></span>847 members &nbsp;·&nbsp; LA &amp; Global
+        </div>
+      </div>
+
+      <div class="feed-body">
+
+        <!-- Your run recap card -->
+        <div class="recap-card">
+          <div class="recap-map-wrap">
+            <div class="map-grid"></div>
+            <!-- Stylized Griffith Park running route SVG -->
+            <svg class="route-svg" viewBox="0 0 362 178" xmlns="http://www.w3.org/2000/svg">
+              <!-- Road hints -->
+              <line x1="55" y1="0" x2="55" y2="178" stroke="rgba(255,255,255,0.04)" stroke-width="9"/>
+              <line x1="140" y1="0" x2="140" y2="178" stroke="rgba(255,255,255,0.04)" stroke-width="9"/>
+              <line x1="228" y1="0" x2="228" y2="178" stroke="rgba(255,255,255,0.04)" stroke-width="9"/>
+              <line x1="315" y1="0" x2="315" y2="178" stroke="rgba(255,255,255,0.04)" stroke-width="9"/>
+              <line x1="0" y1="55" x2="362" y2="55" stroke="rgba(255,255,255,0.04)" stroke-width="9"/>
+              <line x1="0" y1="120" x2="362" y2="120" stroke="rgba(255,255,255,0.04)" stroke-width="9"/>
+
+              <!-- Glow halo -->
+              <path
+                d="M 65 148 C 55 90 90 50 130 38 C 172 24 220 32 258 60 C 296 88 308 128 298 158 C 284 172 240 172 195 168 C 148 164 108 162 80 158 Z"
+                fill="none"
+                stroke="rgba(0,255,148,0.18)"
+                stroke-width="16"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+
+              <!-- Main route (animated draw) -->
+              <path
+                id="route-path"
+                d="M 65 148 C 55 90 90 50 130 38 C 172 24 220 32 258 60 C 296 88 308 128 298 158 C 284 172 240 172 195 168 C 148 164 108 162 80 158 Z"
+                fill="none"
+                stroke="#00FF94"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-dasharray="700"
+                stroke-dashoffset="700">
+                <animate attributeName="stroke-dashoffset" from="700" to="0" dur="2.2s" fill="freeze"/>
+              </path>
+
+              <!-- Start/finish marker -->
+              <circle cx="65" cy="148" r="8" fill="rgba(0,255,148,0.22)"/>
+              <circle cx="65" cy="148" r="4.5" fill="#00FF94"/>
+
+              <!-- Waypoint dots -->
+              <circle cx="130" cy="38"  r="3" fill="rgba(0,255,148,0.5)"/>
+              <circle cx="258" cy="60"  r="3" fill="rgba(0,255,148,0.5)"/>
+              <circle cx="298" cy="158" r="3" fill="rgba(0,255,148,0.5)"/>
+            </svg>
+            <div class="map-overlay-label">Griffith Park, LA</div>
+          </div>
+          <div class="recap-body">
+            <div class="recap-run-label">Your Run Today</div>
+            <div class="recap-stats-row">
+              <div>
+                <div class="recap-stat-val">3.2</div>
+                <div class="recap-stat-lbl">Miles</div>
+              </div>
+              <div>
+                <div class="recap-stat-val">8:52</div>
+                <div class="recap-stat-lbl">Pace/mi</div>
+              </div>
+              <div>
+                <div class="recap-stat-val">34:01</div>
+                <div class="recap-stat-lbl">Time</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed section heading -->
+        <div class="feed-section-label">Club Activity</div>
+
+        <!-- Feed item: Kai -->
+        <div class="feed-item">
+          <div class="feed-avatar av-kai">K</div>
+          <div class="feed-right">
+            <div class="feed-top">
+              <span class="feed-name">Kai Nguyen</span>
+              <span class="feed-time">12 min ago</span>
+            </div>
+            <div class="feed-desc">ran <strong>4.1 mi</strong> in Griffith Park · <strong>8:31/mi avg</strong></div>
+            <div class="feed-badge badge-pr">🔥 Personal Record!</div>
+            <div class="feed-actions">
+              <div class="feed-action" onclick="toggleLike(this)">❤ 24</div>
+              <div class="feed-action">💬 Reply</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed item: Marta -->
+        <div class="feed-item">
+          <div class="feed-avatar av-marta">M</div>
+          <div class="feed-right">
+            <div class="feed-top">
+              <span class="feed-name">Marta Osei</span>
+              <span class="feed-time">1h ago</span>
+            </div>
+            <div class="feed-desc">crushed a segment PR on <strong>Griffith Park Loop</strong></div>
+            <div class="feed-badge badge-seg">⚡ −0:23 vs PR</div>
+            <div class="feed-actions">
+              <div class="feed-action" onclick="toggleLike(this)">❤ 17</div>
+              <div class="feed-action">💬 Reply</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed item: Dev -->
+        <div class="feed-item">
+          <div class="feed-avatar av-dev">D</div>
+          <div class="feed-right">
+            <div class="feed-top">
+              <span class="feed-name">Dev Patel</span>
+              <span class="feed-time">3h ago</span>
+            </div>
+            <div class="feed-desc">ran <strong>3.7 mi</strong> · Hollywood Hills Loop · <strong>8:44/mi</strong></div>
+            <div class="feed-actions">
+              <div class="feed-action" onclick="toggleLike(this)">❤ 9</div>
+              <div class="feed-action">💬 Reply</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram share button -->
+        <button class="share-btn" id="share-btn" onclick="handleShare()">
+          📸 Share to Instagram Story
+        </button>
+
+        <!-- Weekly leaderboard -->
+        <div class="lb-card">
+          <div class="lb-card-header">
+            <div class="lb-card-title">Weekly Leaderboard</div>
+            <div class="lb-card-week">May 13–19</div>
+          </div>
+
+          <div class="lb-row">
+            <div class="lb-pos gold">1</div>
+            <div class="lb-av-sm av-kai">K</div>
+            <div class="lb-name">Kai Nguyen</div>
+            <div class="lb-dist">18.4 mi</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos silver">2</div>
+            <div class="lb-av-sm av-marta">M</div>
+            <div class="lb-name">Marta Osei</div>
+            <div class="lb-dist">16.2 mi</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos bronze">3</div>
+            <div class="lb-av-sm av-dev">D</div>
+            <div class="lb-name">Dev Patel</div>
+            <div class="lb-dist">15.9 mi</div>
+          </div>
+          <div class="lb-row lb-you">
+            <div class="lb-pos" style="color:var(--accent)">4</div>
+            <div class="lb-av-sm av-you">B</div>
+            <div class="lb-name you-color">You</div>
+            <div class="lb-dist you-color">12.1 mi</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos">5</div>
+            <div class="lb-av-sm av-jordan" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.13);color:var(--muted)">J</div>
+            <div class="lb-name dim-color">Jordan Kim</div>
+            <div class="lb-dist dim-color">10.8 mi</div>
+          </div>
+        </div>
+
+      </div><!-- /feed-body -->
+    </div><!-- /screen-feed -->
+
+  </div><!-- /screens -->
+
+  <!-- Bottom tab bar -->
+  <div id="tab-bar">
+    <button class="tab-btn active" id="tab-hud" onclick="switchScreen('hud', 0)">
+      <div class="tab-icon-wrap"><span class="tab-icon">👓</span></div>
+      <span class="tab-label">HUD</span>
+    </button>
+    <button class="tab-btn" id="tab-run" onclick="switchScreen('run', 1)">
+      <div class="tab-icon-wrap"><span class="tab-icon">📱</span></div>
+      <span class="tab-label">Run</span>
+    </button>
+    <button class="tab-btn" id="tab-feed" onclick="switchScreen('feed', 2)">
+      <div class="tab-icon-wrap"><span class="tab-icon">👥</span></div>
+      <span class="tab-label">Feed</span>
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+  /* ─── App State ─────────────────────────────────────── */
+  var state = {
+    dist: 0.0,
+    elapsed: 0,
+    hr: 164,
+    pace: 527,      // seconds per mile (8:47)
+    elev: 0,
+    paused: false,
+    currentScreen: 'hud',
+    currentIdx: 0
+  };
+
+  /* ─── Navigation ────────────────────────────────────── */
+  function switchScreen(id, idx) {
+    if (id === state.currentScreen) return;
+
+    var prev = document.getElementById('screen-' + state.currentScreen);
+    var next = document.getElementById('screen-' + id);
+    var goRight = idx > state.currentIdx;
+
+    // Exit animation for prev
+    prev.classList.remove('active');
+    if (goRight) prev.classList.add('slide-left');
+    setTimeout(function() { prev.classList.remove('slide-left'); }, 300);
+
+    // Entry: set start position then activate
+    next.style.transform = goRight ? 'translateX(40px)' : 'translateX(-40px)';
+    next.style.opacity = '0';
+    next.style.pointerEvents = 'none';
+
+    // Force reflow then animate in
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        next.style.transform = '';
+        next.style.opacity = '';
+        next.style.pointerEvents = '';
+        next.classList.add('active');
+      });
+    });
+
+    document.getElementById('tab-' + state.currentScreen).classList.remove('active');
+    document.getElementById('tab-' + id).classList.add('active');
+
+    state.currentScreen = id;
+    state.currentIdx = idx;
+  }
+
+  /* ─── Formatting ────────────────────────────────────── */
+  function fmtPace(s) {
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function fmtTime(s) {
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  /* ─── Stats Engine ──────────────────────────────────── */
+  function tick() {
+    if (state.paused) return;
+
+    // Distance
+    state.dist += 1 / state.pace;
+    var distStr = state.dist.toFixed(2);
+    document.getElementById('hud-dist').textContent = distStr;
+    document.getElementById('run-dist').textContent = distStr;
+
+    // Time
+    state.elapsed++;
+    var timeStr = fmtTime(state.elapsed);
+    document.getElementById('hud-time').textContent = timeStr;
+    document.getElementById('run-time').textContent = timeStr;
+
+    // Pace — realistic drift with some inertia
+    var drift = Math.round((Math.random() - 0.48) * 6);
+    state.pace = Math.max(508, Math.min(562, state.pace + drift));
+    var paceStr = fmtPace(state.pace);
+    document.getElementById('hud-pace').textContent = paceStr;
+    document.getElementById('run-pace').textContent = paceStr;
+
+    // Heart rate
+    var hrDrift = Math.round((Math.random() - 0.5) * 4);
+    state.hr = Math.max(158, Math.min(174, state.hr + hrDrift));
+    document.getElementById('hud-hr').textContent = state.hr;
+    document.getElementById('run-hr').textContent = state.hr;
+
+    // Elevation (gradual incline)
+    if (state.elapsed % 4 === 0) {
+      var elevStep = Math.floor(Math.random() * 4);
+      state.elev = Math.min(310, state.elev + elevStep);
+      document.getElementById('run-elev').textContent = state.elev;
+    }
+  }
+
+  setInterval(tick, 1000);
+
+  /* ─── Navigation Cue Cycling ────────────────────────── */
+  var navCues = [
+    { arrow: '↰', text: 'Turn left in 0.3 mi' },
+    { arrow: '↑', text: 'Continue straight 0.5 mi' },
+    { arrow: '↱', text: 'Turn right in 0.1 mi' },
+    { arrow: '↑', text: 'Segment starts in 0.4 mi' },
+    { arrow: '↰', text: 'Bear left at the fork' },
+  ];
+  var navIdx = 0;
+
+  function showNavCue() {
+    var pill = document.getElementById('nav-pill');
+    document.getElementById('nav-arrow').textContent = navCues[navIdx].arrow;
+    document.getElementById('nav-text').textContent = navCues[navIdx].text;
+    pill.classList.add('visible');
+    navIdx = (navIdx + 1) % navCues.length;
+    setTimeout(function() { pill.classList.remove('visible'); }, 4500);
+  }
+
+  setTimeout(function() {
+    showNavCue();
+    setInterval(showNavCue, 14000);
+  }, 2800);
+
+  /* ─── Neural Band Capture ───────────────────────────── */
+  function triggerCapture() {
+    var flash = document.getElementById('flash');
+    var toast = document.getElementById('toast');
+
+    flash.classList.add('on');
+    setTimeout(function() { flash.classList.remove('on'); }, 130);
+
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2600);
+  }
+
+  /* ─── Pause Toggle ──────────────────────────────────── */
+  function togglePause() {
+    state.paused = !state.paused;
+    document.getElementById('pause-btn').textContent = state.paused ? '▶ Resume' : '⏸ Pause';
+  }
+
+  /* ─── Like interaction ──────────────────────────────── */
+  function toggleLike(el) {
+    if (el.classList.contains('liked')) return;
+    el.classList.add('liked');
+    var parts = el.textContent.match(/(\D+)(\d+)/);
+    if (parts) el.textContent = parts[1] + (parseInt(parts[2]) + 1);
+  }
+
+  /* ─── Share button ──────────────────────────────────── */
+  function handleShare() {
+    var btn = document.getElementById('share-btn');
+    btn.textContent = '✓ Shared to Instagram!';
+    btn.classList.add('shared');
+    setTimeout(function() {
+      btn.innerHTML = '📸 Share to Instagram Story';
+      btn.classList.remove('shared');
+    }, 3200);
+  }
+
+  /* ─── Clock ─────────────────────────────────────────── */
+  function updateClock() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    document.getElementById('run-clock').textContent = h + ':' + (m < 10 ? '0' : '') + m;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+</script>
+</body>
+</html>
