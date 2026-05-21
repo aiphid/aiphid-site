@@ -1022,13 +1022,14 @@
       const email     = document.getElementById('email').value.trim().toLowerCase();
       const city      = document.getElementById('city').value.trim();
 
-      // Log consent to Supabase (CCPA audit trail)
-      // Supabase anon key allows inserts into consent_logs via RLS policy
+      // Register as aiphid platform user + log CCPA consent (both non-blocking)
       try {
-        await logConsent({ email, firstName, lastName });
+        await Promise.all([
+          upsertAiphidUser({ email, firstName, lastName, city }),
+          logConsent({ email, firstName, lastName }),
+        ]);
       } catch (e) {
-        // Non-blocking — don't stop the flow if logging fails, but report it
-        console.error('[DRC] consent log failed:', e);
+        console.error('[aiphid] registration write failed:', e);
       }
 
       // Build Stripe URL with prefill params
@@ -1045,6 +1046,34 @@
       });
 
       window.location.href = `${base}?${params.toString()}`;
+    }
+
+    /* ── aiphid user upsert ─────────────────────────────────── */
+    async function upsertAiphidUser({ email, firstName, lastName, city }) {
+      const SUPABASE_URL      = 'https://giwysfktknqztpvkkfjm.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_GJqlK9srbBIh-hrEuZHhKg_RQS11ysK';
+
+      await fetch(`${SUPABASE_URL}/rest/v1/aiphid_users`, {
+        method: 'POST',
+        headers: {
+          'apikey':        SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type':  'application/json',
+          'Prefer':        'resolution=merge-duplicates,return=minimal',
+        },
+        body: JSON.stringify({
+          email,
+          first_name: firstName,
+          last_name:  lastName,
+          source:     'drc',
+          metadata: {
+            tier:               selectedTier,
+            city:               city || null,
+            marketing_consent:  consentMarketing,
+            registration_source: 'web',
+          },
+        }),
+      });
     }
 
     /* ── Consent logger ─────────────────────────────────────── */
