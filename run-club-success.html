@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>You're In — Diplo's Run Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --card: #111111;
+      --border: #222222;
+      --text: #ffffff;
+      --muted: #888888;
+      --dim: #444444;
+      --accent: #00FF94;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+    html, body {
+      width: 100%;
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,255,148,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .checkmark-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(0,255,148,0.12);
+      border: 2px solid rgba(0,255,148,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .checkmark-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    .next-steps {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+
+    .next-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .step:last-child { margin-bottom: 0; }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #000;
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+      padding-top: 4px;
+    }
+
+    .step-text strong { color: var(--text); }
+
+    .testflight-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      padding: 16px 24px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 16px;
+      -webkit-appearance: none;
+      transition: opacity 0.15s;
+    }
+
+    .testflight-btn:active { opacity: 0.85; }
+
+    .share-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 15px 24px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      -webkit-appearance: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .share-btn:active { border-color: var(--dim); }
+
+    .bib-hint {
+      margin-top: 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+    }
+
+    .bib-hint span {
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <div class="content">
+
+    <div class="checkmark-wrap">
+      <div class="checkmark-icon">✓</div>
+    </div>
+
+    <div class="eyebrow">Registration confirmed</div>
+    <h1>You're <span>in.</span></h1>
+    <p class="subtitle">
+      Check your email for your confirmation and bib number.
+      Race day is going to be special.
+    </p>
+
+    <div class="next-steps">
+      <div class="next-label">What's next</div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Check your email</strong> — confirmation + bib number coming in the next few minutes.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Download the app</strong> — live leaderboard, pace tracker, and after-party livestream.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Show up.</strong> Race day details (start time, parking, corral) in your confirmation email.</div>
+      </div>
+    </div>
+
+    <a class="testflight-btn" href="https://testflight.apple.com/join/DRC_TESTFLIGHT_CODE" target="_blank">
+      Download DRC App
+    </a>
+
+    <button class="share-btn" onclick="handleShare()">
+      Share with a friend
+    </button>
+
+    <div class="bib-hint">
+      Your bib number will be emailed to you shortly.
+    </div>
+
+  </div>
+
+  <script>
+    async function handleShare() {
+      const data = {
+        title: "Diplo's Run Club",
+        text: "Just registered for Diplo's Run Club. Run. Rave. Repeat. — limited spots:",
+        url: 'https://aiphid.com/register',
+      };
+      try {
+        if (navigator.share && navigator.canShare(data)) {
+          await navigator.share(data);
+        } else {
+          await navigator.clipboard.writeText('https://aiphid.com/register');
+          const btn = document.querySelector('.share-btn');
+          btn.textContent = 'Link copied!';
+          setTimeout(() => { btn.textContent = 'Share with a friend'; }, 2500);
+        }
+      } catch {}
+    }
+  </script>
+</body>
+</html>
