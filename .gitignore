@@ -5,3 +5,5 @@ node_modules/
 .env.*.local
 dist/
 .vercel/
+test-results/
+playwright-report/
