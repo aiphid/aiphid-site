@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Diplo's Run Club · aiphid, Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --card: #111111;
+      --border: #222222;
+      --text: #ffffff;
+      --muted: #888888;
+      --dim: #444444;
+      --accent: #00FF94;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      padding: 0 0 60px;
+    }
+
+    .nav {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dim);
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav a {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .content {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 36px 0 12px;
+      color: var(--text);
+    }
+
+    h2:first-of-type { margin-top: 0; }
+
+    p { color: var(--muted); margin-bottom: 14px; }
+
+    p:last-child { margin-bottom: 0; }
+
+    ul {
+      color: var(--muted);
+      padding-left: 20px;
+      margin-bottom: 14px;
+    }
+
+    li { margin-bottom: 6px; }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .highlight-box {
+      background: rgba(0,255,148,0.06);
+      border: 1px solid rgba(0,255,148,0.15);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 20px 0;
+    }
+
+    .highlight-box p { color: var(--text); margin: 0; }
+
+    .anchor-target { scroll-margin-top: 80px; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--text);
+      background: var(--card);
+    }
+
+    td { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-logo">ai.<span>ph</span>.id</div>
+    <a href="/register">← Back to registration</a>
+  </nav>
+
+  <div class="content">
+
+    <div class="eyebrow">Privacy Policy · v1 · 2026-05-21</div>
+    <h1>Privacy Policy</h1>
+    <div class="meta">
+      aiphid, Inc. — Diplo's Run Club<br>
+      Effective: May 21, 2026 · Last updated: May 21, 2026
+    </div>
+
+    <div class="highlight-box">
+      <p><strong>We do not sell or share your personal information.</strong> This policy explains exactly what we collect, why, and how you can control it.</p>
+    </div>
+
+    <h2>1. Who we are</h2>
+    <p>aiphid, Inc. ("aiphid," "we," "us") operates Diplo's Run Club (DRC), a live running event series. Contact: <a href="mailto:privacy@aiphid.com">privacy@aiphid.com</a>.</p>
+
+    <h2>2. Information we collect</h2>
+
+    <table>
+      <tr><th>Category</th><th>Data</th><th>Why</th></tr>
+      <tr><td>Identity</td><td>Name, email address</td><td>Process registration, send race updates</td></tr>
+      <tr><td>Payment</td><td>Processed by Stripe — we never see your card number</td><td>Collect registration fee</td></tr>
+      <tr><td>Location (optional)</td><td>City you provide; GPS during race (with permission)</td><td>Leaderboard, pace tracking</td></tr>
+      <tr><td>Device</td><td>Browser/OS type, app version</td><td>Debug crashes, improve experience</td></tr>
+      <tr><td>Usage</td><td>Pages visited, features used</td><td>Product analytics (PostHog)</td></tr>
+      <tr><td>Consent</td><td>Timestamp + policy version when you consented</td><td>Legal compliance audit trail</td></tr>
+    </table>
+
+    <h2>3. How we use your information</h2>
+    <ul>
+      <li>Confirm and manage your race registration</li>
+      <li>Send race day logistics, bib number, and app access</li>
+      <li>Display your pace and position on the live leaderboard</li>
+      <li>Improve the DRC app and event experience</li>
+      <li>Send marketing emails <em>only if you opted in</em></li>
+    </ul>
+
+    <h2>4. Who we share data with</h2>
+    <p>We share data only with service providers needed to operate DRC:</p>
+    <ul>
+      <li><strong>Stripe</strong> — payment processing. Stripe's privacy policy: stripe.com/privacy</li>
+      <li><strong>Supabase</strong> — database and authentication. supabase.com/privacy</li>
+      <li><strong>PostHog</strong> — anonymous usage analytics. posthog.com/privacy</li>
+    </ul>
+    <p>We do not sell, rent, or trade your personal information to any third party.</p>
+
+    <h2>5. Data retention</h2>
+    <ul>
+      <li>Registration records: retained for 3 years after your last event for legal and financial compliance</li>
+      <li>GPS run data: retained for 1 year, then deleted</li>
+      <li>Consent logs: retained for 5 years (legal requirement)</li>
+      <li>Marketing preferences: retained until you unsubscribe or request deletion</li>
+    </ul>
+
+    <hr>
+
+    <h2 id="ccpa" class="anchor-target">6. Your California Privacy Rights (CCPA)</h2>
+
+    <div class="highlight-box">
+      <p>California residents have the right to know what personal information we collect, delete it, correct it, opt out of its sale (we don't sell it), and not be discriminated against for exercising these rights.</p>
+    </div>
+
+    <p>Under the California Consumer Privacy Act (CCPA), as amended by the CPRA, you have the right to:</p>
+
+    <ul>
+      <li><strong>Know</strong> — request a copy of the personal information we hold about you</li>
+      <li><strong>Delete</strong> — request deletion of your personal information (subject to legal hold obligations)</li>
+      <li><strong>Correct</strong> — request correction of inaccurate personal information</li>
+      <li><strong>Opt out of sale/sharing</strong> — we do not sell or share your personal information for cross-context behavioral advertising</li>
+      <li><strong>Limit sensitive data use</strong> — we do not process sensitive personal information beyond what is necessary for the service</li>
+      <li><strong>Non-discrimination</strong> — exercising your rights will not affect your race registration or service access</li>
+    </ul>
+
+    <p>To exercise any of these rights, email <a href="mailto:privacy@aiphid.com">privacy@aiphid.com</a> with the subject line "CCPA Request." We will respond within 45 days.</p>
+
+    <p>We do not recognize browser-based Global Privacy Control (GPC) signals at this time — please email us directly.</p>
+
+    <h2>7. Cookies &amp; tracking</h2>
+    <p>We use strictly necessary cookies (session management, security) and opt-in analytics cookies (PostHog). We do not use advertising trackers or third-party remarketing pixels.</p>
+
+    <h2>8. Children</h2>
+    <p>DRC events are for participants 16 and older. We do not knowingly collect personal information from children under 16. If you believe we have done so in error, contact <a href="mailto:privacy@aiphid.com">privacy@aiphid.com</a> immediately.</p>
+
+    <h2>9. Security</h2>
+    <p>We use TLS encryption in transit, row-level security in our database, and limit employee access to personal data on a need-to-know basis. Payment data is handled entirely by Stripe and never touches our servers.</p>
+
+    <h2>10. Changes to this policy</h2>
+    <p>We will notify registered participants by email before making material changes. The "Last updated" date at the top of this page reflects the most recent revision. Continued participation in DRC events after the effective date constitutes acceptance of the updated policy.</p>
+
+    <h2>11. Contact</h2>
+    <p>
+      aiphid, Inc.<br>
+      <a href="mailto:privacy@aiphid.com">privacy@aiphid.com</a><br>
+      For CCPA requests: include "CCPA Request" in your subject line.<br>
+      Response time: within 45 days.
+    </p>
+
+  </div>
+</body>
+</html>
