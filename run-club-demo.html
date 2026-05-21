@@ -1149,6 +1149,244 @@
       text-transform: uppercase;
     }
 
+    /* ─── SCREEN 4: LIVE PARTY STREAM ───────────────────────── */
+    #screen-live {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .live-video-frame {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #050505;
+      min-height: 0;
+    }
+
+    .live-video-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 28% 38%, rgba(90,20,140,0.65) 0%, transparent 55%),
+        radial-gradient(ellipse at 72% 65%, rgba(20,45,110,0.55) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 85%, rgba(160,35,20,0.4) 0%, transparent 40%),
+        #080808;
+      animation: liveVideoShift 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes liveVideoShift {
+      0%   { filter: brightness(0.88) saturate(1.3); }
+      50%  { filter: brightness(1.08) saturate(0.85); }
+      100% { filter: brightness(0.94) saturate(1.15); }
+    }
+
+    .live-video-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,0.04) 3px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+    }
+
+    .live-top-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 14px 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, transparent 100%);
+      z-index: 10;
+    }
+
+    .live-badge-red {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #FF3B30;
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+
+    .live-badge-red .live-dot {
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .live-viewers-count {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.03em;
+    }
+
+    .dolby-badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.45);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 3px 7px;
+      border-radius: 2px;
+    }
+
+    .live-venue-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 80px 16px 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 100%);
+      z-index: 10;
+    }
+
+    .live-now-playing {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 5px;
+    }
+
+    .live-venue-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+
+    .live-venue-location {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .live-chat-overlay {
+      position: absolute;
+      bottom: 80px; left: 0; right: 0;
+      padding: 0 14px;
+      z-index: 11;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .chat-msg {
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+      animation: chatFadeIn 0.22s ease-out;
+    }
+
+    @keyframes chatFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-handle {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .chat-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.3;
+    }
+
+    .live-reactions-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 12;
+      overflow: hidden;
+    }
+
+    .float-reaction {
+      position: absolute;
+      bottom: 90px;
+      font-size: 26px;
+      animation: floatUp 3s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      60%  { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-220px) scale(0.55); }
+    }
+
+    .live-stats-bar {
+      background: #0a0a0a;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-around;
+      flex-shrink: 0;
+    }
+
+    .live-stat { text-align: center; }
+
+    .live-stat-val {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .live-stat-key {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .live-reaction-bar {
+      padding: 12px 16px 14px;
+      background: #0a0a0a;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .reaction-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.12s, background 0.12s;
+      color: inherit;
+    }
+
+    .reaction-btn:active { transform: scale(0.86); background: #1a1a1a; }
+
     /* ─── Overlays ───────────────────────────────────────────── */
     #flash {
       position: fixed;
@@ -1583,6 +1821,65 @@
       </div><!-- /feed-body -->
     </div><!-- /screen-feed -->
 
+    <!-- ══════════════════════════════════════════════════════════
+         SCREEN 4 — AFTER-PARTY LIVESTREAM (Dolby OptiView)
+    ══════════════════════════════════════════════════════════ -->
+    <div class="screen" id="screen-live">
+
+      <!-- Simulated video frame -->
+      <div class="live-video-frame">
+        <div class="live-video-bg"></div>
+
+        <!-- Top bar: LIVE pill + viewers + Dolby badge -->
+        <div class="live-top-bar">
+          <div class="live-badge-red">
+            <span class="live-dot"></span>LIVE
+          </div>
+          <div class="live-viewers-count" id="live-viewers">2,847 watching</div>
+          <div class="dolby-badge">DOLBY OPTIVIEW</div>
+        </div>
+
+        <!-- Floating emoji reactions -->
+        <div class="live-reactions-layer" id="reactions-layer"></div>
+
+        <!-- Scrolling chat messages -->
+        <div class="live-chat-overlay" id="live-chat"></div>
+
+        <!-- Venue info pinned to bottom of video -->
+        <div class="live-venue-overlay">
+          <div class="live-now-playing">🎵 Diplo — live set</div>
+          <div class="live-venue-name">After-Party at Sugarfish</div>
+          <div class="live-venue-location">📍 Venice Beach · club members only</div>
+        </div>
+      </div><!-- /live-video-frame -->
+
+      <!-- Tech quality stats -->
+      <div class="live-stats-bar">
+        <div class="live-stat">
+          <div class="live-stat-val">&lt; 400ms</div>
+          <div class="live-stat-key">latency</div>
+        </div>
+        <div class="live-stat">
+          <div class="live-stat-val">4K HDR</div>
+          <div class="live-stat-key">quality</div>
+        </div>
+        <div class="live-stat">
+          <div class="live-stat-val">Dolby Atmos</div>
+          <div class="live-stat-key">audio</div>
+        </div>
+      </div>
+
+      <!-- Reaction buttons -->
+      <div class="live-reaction-bar">
+        <button class="reaction-btn" onclick="sendReaction('🔥')">🔥</button>
+        <button class="reaction-btn" onclick="sendReaction('🏃')">🏃</button>
+        <button class="reaction-btn" onclick="sendReaction('❤️')">❤️</button>
+        <button class="reaction-btn" onclick="sendReaction('🎵')">🎵</button>
+        <button class="reaction-btn" onclick="sendReaction('🙌')">🙌</button>
+      </div>
+
+    </div><!-- /screen-live -->
+
   </div><!-- /screens -->
 
   <!-- Bottom tab bar -->
@@ -1598,6 +1895,10 @@
     <button class="tab-btn" id="tab-feed" onclick="switchScreen('feed', 2)">
       <div class="tab-icon-wrap"><span class="tab-icon">👥</span></div>
       <span class="tab-label">Feed</span>
+    </button>
+    <button class="tab-btn" id="tab-live" onclick="switchScreen('live', 3)">
+      <div class="tab-icon-wrap"><span class="tab-icon">📡</span></div>
+      <span class="tab-label">Live</span>
     </button>
   </div>
 
@@ -1763,6 +2064,81 @@
       btn.classList.remove('shared');
     }, 3200);
   }
+
+  /* ─── Live Screen ───────────────────────────────────── */
+  var liveViewerCount = 2847;
+  var liveChatSeed = [
+    { handle: '@mkelly', text: 'just finished the 10k 🔥' },
+    { handle: '@diplo_fan', text: 'this stream quality is insane' },
+    { handle: '@run.mia', text: 'where is everyone??' },
+    { handle: '@tylerjames', text: 'can hear the bass from outside lol' },
+    { handle: '@juanita.r', text: 'wish i was there 😭' },
+    { handle: '@pace8min', text: 'running over now!!' },
+    { handle: '@sarah_runs', text: '❤️❤️❤️' },
+    { handle: '@nyc_miles', text: 'this is why I joined this club' },
+    { handle: '@diplo', text: '🙌 see you all inside' },
+    { handle: '@run.venice', text: 'so smooth wtf — no lag at all' },
+    { handle: '@briank', text: 'Dolby audio slaps' },
+    { handle: '@ariana.r', text: 'quality looks so good on my tv' },
+    { handle: '@marco_r', text: 'stream is better than being there lol' },
+    { handle: '@kezia.m', text: 'HOW is there zero buffering' },
+  ];
+  var liveChatIdx = 0;
+
+  function initLiveChat() {
+    for (var i = 0; i < 4; i++) appendChatMsg(liveChatSeed[i]);
+    liveChatIdx = 4;
+  }
+
+  function appendChatMsg(msg) {
+    var container = document.getElementById('live-chat');
+    if (!container) return;
+    var row = document.createElement('div');
+    row.className = 'chat-msg';
+    var handle = document.createElement('span');
+    handle.className = 'chat-handle';
+    handle.textContent = msg.handle;
+    var text = document.createElement('span');
+    text.className = 'chat-text';
+    text.textContent = msg.text;
+    row.appendChild(handle);
+    row.appendChild(text);
+    container.appendChild(row);
+    while (container.children.length > 5) container.removeChild(container.firstChild);
+  }
+
+  function tickLiveChat() {
+    appendChatMsg(liveChatSeed[liveChatIdx % liveChatSeed.length]);
+    liveChatIdx++;
+  }
+
+  function tickLiveViewers() {
+    var delta = Math.round((Math.random() - 0.38) * 18);
+    liveViewerCount = Math.max(2780, liveViewerCount + delta);
+    var el = document.getElementById('live-viewers');
+    if (el) el.textContent = liveViewerCount.toLocaleString() + ' watching';
+  }
+
+  function sendReaction(emoji) {
+    var layer = document.getElementById('reactions-layer');
+    if (!layer) return;
+    var el = document.createElement('div');
+    el.className = 'float-reaction';
+    el.textContent = emoji;
+    el.style.left = (Math.random() * 60 + 20) + '%';
+    layer.appendChild(el);
+    setTimeout(function() { if (layer.contains(el)) layer.removeChild(el); }, 3200);
+  }
+
+  function autoSendReaction() {
+    var pool = ['🔥', '🏃', '❤️', '🎵', '🙌', '💜', '🎉', '🔥', '🔥'];
+    sendReaction(pool[Math.floor(Math.random() * pool.length)]);
+  }
+
+  initLiveChat();
+  setInterval(tickLiveChat, 3600);
+  setInterval(tickLiveViewers, 2200);
+  setInterval(autoSendReaction, 4500);
 
   /* ─── Clock ─────────────────────────────────────────── */
   function updateClock() {
