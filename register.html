@@ -934,12 +934,10 @@
     /* ── State ──────────────────────────────────────────────── */
     const PRIVACY_POLICY_VERSION = '2026-05-21-v1';
 
-    // Stripe payment links — replace these with real values from Stripe Dashboard
-    // Dashboard: dashboard.stripe.com → Payment Links → Create link
     const STRIPE_LINKS = {
-      general: 'https://buy.stripe.com/REPLACE_GENERAL',
-      vip:     'https://buy.stripe.com/REPLACE_VIP',
-      season:  'https://buy.stripe.com/REPLACE_SEASON',
+      general: 'https://buy.stripe.com/4gMfZh7Wk60G79ydVY67S01',
+      vip:     'https://buy.stripe.com/fZu7sLekIdt8dxW7xA67S02',
+      season:  'https://buy.stripe.com/9B6eVd6Sg88OfG405867S03',
     };
 
     let selectedTier  = 'vip';
@@ -1078,7 +1076,6 @@
 
     /* ── Consent logger ─────────────────────────────────────── */
     async function logConsent({ email, firstName, lastName }) {
-      // Supabase project: giwysfktknqztpvkkfjm
       const SUPABASE_URL      = 'https://giwysfktknqztpvkkfjm.supabase.co';
       const SUPABASE_ANON_KEY = 'sb_publishable_GJqlK9srbBIh-hrEuZHhKg_RQS11ysK';
 
