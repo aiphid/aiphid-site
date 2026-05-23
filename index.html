@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ai.ph.id — coming soon</title>
+  <title>ai.ph.id — the human at the center of AI</title>
+  <meta name="description" content="AIPHID puts the human at the center of AI. A manifesto on the Oppenheimer moment of AI and what to do about it." />
+  <meta property="og:title" content="ai.ph.id — the human at the center of AI" />
+  <meta property="og:description" content="We're at the Oppenheimer moment of AI. AIPHID puts the human at the center — so we build with the machines, not under them." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -20,35 +23,44 @@
       --gold: #FFD147;
       --teal: #47FFD4;
       --white: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.55);
+      --text-body: rgba(255, 255, 255, 0.82);
     }
 
     html, body {
       width: 100%;
-      height: 100%;
       background: var(--bg);
       color: var(--white);
       font-family: 'DM Mono', monospace;
-      overflow: hidden;
     }
 
-    canvas {
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background canvas — fixed, sits behind everything */
+    canvas#c {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
       display: block;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    .overlay {
-      position: fixed;
-      inset: 0;
+    /* Hero — first viewport */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
       text-align: center;
-      pointer-events: none;
     }
 
     .eyebrow {
@@ -72,26 +84,23 @@
       filter: drop-shadow(0 0 40px rgba(202, 255, 71, 0.18));
     }
 
-    .wordmark .ai {
-      color: var(--lime);
-    }
-
-    .wordmark .dot {
-      color: var(--gold);
-    }
-
-    .wordmark .phid {
-      color: var(--white);
-    }
+    .wordmark .ai { color: var(--lime); }
+    .wordmark .dot { color: var(--gold); }
+    .wordmark .phid { color: var(--white); }
 
     .tagline {
       font-family: 'DM Mono', monospace;
-      font-size: clamp(0.75rem, 1.8vw, 1rem);
+      font-size: clamp(0.85rem, 1.9vw, 1.05rem);
       font-weight: 400;
       line-height: 1.7;
-      color: rgba(255, 255, 255, 0.65);
-      max-width: 36em;
-      margin-bottom: 2.5rem;
+      color: var(--text-body);
+      max-width: 38em;
+      margin-bottom: 2rem;
+    }
+
+    .tagline strong {
+      color: var(--lime);
+      font-weight: 500;
     }
 
     .status {
@@ -104,6 +113,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--gold);
+      margin-bottom: 2.5rem;
     }
 
     .pulse-dot {
@@ -120,39 +130,214 @@
       50% { opacity: 0.7; transform: scale(0.85); box-shadow: 0 0 0 6px rgba(255, 209, 71, 0); }
     }
 
-    .domain {
-      position: fixed;
-      bottom: 1.75rem;
+    .scroll-cue {
+      position: absolute;
+      bottom: 2.5rem;
       left: 50%;
       transform: translateX(-50%);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
       font-family: 'DM Mono', monospace;
-      font-size: clamp(0.65rem, 1.2vw, 0.8rem);
+      font-size: 0.7rem;
       font-weight: 500;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      animation: bounce 2.4s ease-in-out infinite;
+    }
+
+    .scroll-cue:hover { color: var(--lime); }
+
+    .scroll-cue .arrow {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, 6px); }
+    }
+
+    /* Manifesto sections */
+    .manifesto {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(7, 7, 10, 0) 0%, rgba(7, 7, 10, 0.85) 8%, rgba(7, 7, 10, 0.96) 100%);
+      padding: 6rem 1.5rem 8rem;
+    }
+
+    .section {
+      max-width: 42rem;
+      margin: 0 auto 5rem;
+    }
+
+    .section:last-of-type { margin-bottom: 0; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1rem;
+    }
+
+    .section h2 {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+
+    .section h2 .accent { color: var(--lime); }
+    .section h2 .accent-gold { color: var(--gold); }
+
+    .section p {
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+      line-height: 1.75;
+      color: var(--text-body);
+      margin-bottom: 1.2rem;
+    }
+
+    .section p:last-child { margin-bottom: 0; }
+
+    .pullquote {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+      line-height: 1.4;
+      color: var(--gold);
+      border-left: 3px solid var(--gold);
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .footer {
+      position: relative;
+      z-index: 1;
+      padding: 3rem 1.5rem 2rem;
+      text-align: center;
+      background: var(--bg);
+    }
+
+    .footer .signature {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer .domain {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
       color: rgba(255, 255, 255, 0.25);
       text-transform: lowercase;
+    }
+
+    .footer a {
+      color: var(--teal);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(71, 255, 212, 0.3);
+    }
+
+    .footer a:hover { border-bottom-color: var(--teal); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pulse-dot, .scroll-cue { animation: none; }
     }
   </style>
 </head>
 <body>
   <canvas id="c"></canvas>
 
-  <div class="overlay">
+  <section class="hero">
     <p class="eyebrow">Augmented Intelligence · Powered by Human · Idea Development</p>
     <h1 class="wordmark">
       <span class="ai">ai</span><span class="dot">.</span><span class="phid">ph</span><span class="dot">.</span><span class="phid">id</span>
     </h1>
     <p class="tagline">
-      The conductor of live experiences.<br />
-      We don't replace the orchestra — we make every instrument play in harmony.
+      We're at the <strong>Oppenheimer moment of AI</strong>.<br />
+      AIPHID puts the human at the center — so we build <em>with</em> the machines, not <em>under</em> them.
     </p>
     <div class="status">
       <span class="pulse-dot"></span>
       Coming soon.
     </div>
-  </div>
+    <a class="scroll-cue" href="#manifesto" aria-label="Scroll to manifesto">
+      <span>read the manifesto</span>
+      <span class="arrow">↓</span>
+    </a>
+  </section>
 
-  <p class="domain">ai.ph.id</p>
+  <section class="manifesto" id="manifesto">
+    <article class="section">
+      <p class="section-label">Manifesto · 2026</p>
+      <h2>The human <span class="accent">at the center</span>.</h2>
+      <p>All of the work I'm doing with AIPHID and AI has always been focused on what the human's role is in all of it. Centering AI around the human being aided by it.</p>
+      <p>I believe we're at our Oppenheimer moment of AI. We have to decide.</p>
+    </article>
+
+    <article class="section">
+      <p class="section-label">01 · The crossroads</p>
+      <h2>I am become death — or something <span class="accent-gold">different</span>.</h2>
+      <p>Oppenheimer saw the destructive power of what he'd built — "I am become death, destroyer of worlds" — but the runaway train still left the station. Mutually assured destruction. Big nations fighting to build bigger and bigger bombs, until now I have a big bomb pointed at you and you have a big bomb pointed at me, and we're at a stalemate where nothing gets done.</p>
+      <p>What if people had pointed that same enthusiasm at the other thing the science unlocked? A new source of energy. <em>E = mc²</em>. The tremendous potential of energy and resources.</p>
+    </article>
+
+    <article class="section">
+      <p class="section-label">02 · The opportunity</p>
+      <h2>What if scarcity <span class="accent">didn't matter</span>?</h2>
+      <p>How many wars have been fought, how many people have died, for resources? How many conflicts just in the recent past — the craziness in the Middle East, fighting over oil, the conflict with Iran.</p>
+      <p>What if it didn't fucking matter? If everybody has unlimited sources of power, because physics says so — energy equals mass times the speed of light squared — that's the potential. We have the potential to take the actual limit of the universe and put it to energy. What kind of society could we produce?</p>
+      <p class="pullquote">But we have to have the right people in the conversation.</p>
+    </article>
+
+    <article class="section">
+      <p class="section-label">03 · The warning</p>
+      <h2>The Matrix needs us. <span class="accent-gold">Don't be a battery.</span></h2>
+      <p>We're at the beginning of <em>Oppenheimer</em>, at the beginning of <em>The Matrix</em>. Everything is fucking great. We're marveling at our own humanity — at our own intelligence and creative power — by giving birth to AI. And it's great right now. But it's going to fucking enslave us unless we actually learn how to work with the machines.</p>
+      <p>The machines need to be guided. At the end of the day, the machines in <em>The Matrix</em> needed us too — they needed a source of power, they needed everything from humans. They just reduced it to the bare minimum, the bare energy.</p>
+      <p class="pullquote">The spark of creativity, the spark of everything that makes us human, is individual. It's what makes each individual valuable and special.</p>
+      <p>It puts the human at the heart of everything, because collectively we can do great things.</p>
+    </article>
+
+    <article class="section">
+      <p class="section-label">04 · The democratization</p>
+      <h2>Knock down the <span class="accent">barriers</span>.</h2>
+      <p>This is also the democratization of all of this. Institutional structures are now gone, or at least reduced — because if AI can help somebody who was held back by institutional structures, whether by resourcing, racism, whatever the case is, then we knock down those barriers.</p>
+      <p>There are people who are privileged without those barriers, and people who are not. If we can knock down those barriers, who knows what could be produced?</p>
+    </article>
+
+    <article class="section">
+      <p class="section-label">05 · The reframe</p>
+      <h2>Laughter was orders of magnitude <span class="accent-gold">more productive</span>.</h2>
+      <p>Here's my tortured metaphor — we're at the beginning of <em>Monsters Inc.</em> Or maybe <em>Monsters Inc. 2</em>. A big corporation is taking this AI and looking at how we used to do things: we used to terrorize children for a scream, because we needed the energy. We needed the energy.</p>
+      <p>So what do they build? They build a machine that just sucks the scream out, terrifies kids and straps them in and makes that more efficient. Which is morally reprehensible. When all along, <strong>laughter was orders of magnitude more productive.</strong></p>
+    </article>
+
+    <article class="section">
+      <p class="section-label">06 · The work</p>
+      <h2>Refocus it. <span class="accent">Before it refocuses us.</span></h2>
+      <p>We have to reframe how AI is going to be used. Understand that it is a bomb — it is an atomic bomb that could destroy humanity, and everybody should be careful and aware of that.</p>
+      <p>But we have to refocus it, because otherwise we're going to get stuck fighting different wars.</p>
+      <p>That's what AIPHID is for.</p>
+    </article>
+  </section>
+
+  <footer class="footer">
+    <p class="signature">— Ben, founder · 2026-05-23</p>
+    <p class="domain">ai.ph.id</p>
+  </footer>
 
   <script>
     const canvas = document.getElementById('c');
@@ -170,7 +355,6 @@
     let nodes = [];
     let connections = [];
     let animFrame;
-    let spawnTimer = 0;
 
     function resize() {
       W = canvas.width = window.innerWidth;
@@ -183,8 +367,6 @@
       constructor(x, y, parent = null, depth = 0) {
         this.x = x;
         this.y = y;
-        this.tx = x;
-        this.ty = y;
         this.vx = (Math.random() - 0.5) * 0.3;
         this.vy = (Math.random() - 0.5) * 0.3;
         this.parent = parent;
@@ -202,21 +384,14 @@
       }
 
       update(now) {
-        // fade in
         if (this.alpha < 1) this.alpha = Math.min(1, this.alpha + 0.02);
-
-        // gentle drift
         this.x += this.vx;
         this.y += this.vy;
         this.vx *= 0.995;
         this.vy *= 0.995;
-
-        // subtle oscillation
         const age = (now - this.born) / 1000;
         this.x += Math.sin(age * 0.7 + this.born) * 0.08;
         this.y += Math.cos(age * 0.5 + this.born) * 0.08;
-
-        // glow pulse
         this.glowIntensity += 0.02 * this.glowDir;
         if (this.glowIntensity > 1 || this.glowIntensity < 0) this.glowDir *= -1;
       }
@@ -224,8 +399,6 @@
       draw() {
         ctx.save();
         ctx.globalAlpha = this.alpha * 0.9;
-
-        // outer glow
         const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * (6 + this.glowIntensity * 4));
         g.addColorStop(0, this.color + 'CC');
         g.addColorStop(0.3, this.color + '44');
@@ -234,13 +407,10 @@
         ctx.arc(this.x, this.y, this.radius * (6 + this.glowIntensity * 4), 0, Math.PI * 2);
         ctx.fillStyle = g;
         ctx.fill();
-
-        // core
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.fill();
-
         ctx.restore();
       }
 
@@ -248,16 +418,12 @@
         if (now < this.nextSpawn) return null;
         if (this.childCount >= this.maxChildren) return null;
         if (this.depth >= 7) return null;
-
         this.childCount++;
         const angle = Math.random() * Math.PI * 2;
         const dist = 40 + Math.random() * 80;
         const nx = this.x + Math.cos(angle) * dist;
         const ny = this.y + Math.sin(angle) * dist;
-
-        // keep on screen
         if (nx < 0 || nx > W || ny < 0 || ny > H) {
-          // reflect angle toward center
           const toCenter = Math.atan2(cy - this.y, cx - this.x);
           const newAngle = toCenter + (Math.random() - 0.5) * Math.PI;
           const child = new Node(
@@ -268,7 +434,6 @@
           this.nextSpawn = now + 600 + Math.random() * 2500;
           return child;
         }
-
         this.nextSpawn = now + 600 + Math.random() * 2500;
         return new Node(nx, ny, this, this.depth + 1);
       }
@@ -291,22 +456,17 @@
         const { a, b } = this;
         const px = a.x + (b.x - a.x) * this.progress;
         const py = a.y + (b.y - a.y) * this.progress;
-
         ctx.save();
         ctx.globalAlpha = this.alpha * Math.min(a.alpha, b.alpha) * 0.45;
-
         const g = ctx.createLinearGradient(a.x, a.y, px, py);
         g.addColorStop(0, a.color);
         g.addColorStop(1, b.color);
-
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(px, py);
         ctx.strokeStyle = g;
         ctx.lineWidth = 0.8;
         ctx.stroke();
-
-        // traveling particle
         if (this.progress < 1) {
           ctx.beginPath();
           ctx.arc(px, py, 1.5, 0, Math.PI * 2);
@@ -314,7 +474,6 @@
           ctx.globalAlpha = this.alpha;
           ctx.fill();
         }
-
         ctx.restore();
       }
     }
@@ -322,7 +481,6 @@
     function init() {
       nodes = [];
       connections = [];
-      // seed node at center
       const root = new Node(cx, cy, null, 0);
       root.alpha = 1;
       nodes.push(root);
@@ -331,29 +489,21 @@
     function loop(now) {
       ctx.fillStyle = 'rgba(7, 7, 10, 0.18)';
       ctx.fillRect(0, 0, W, H);
-
-      // update & draw connections
       for (const conn of connections) {
         conn.update();
         conn.draw();
       }
-
-      // update & draw nodes
       const newNodes = [];
       for (const node of nodes) {
         node.update(now);
         node.draw();
-
         const child = node.trySpawn(now);
         if (child) {
           newNodes.push(child);
           connections.push(new Connection(node, child));
         }
       }
-
       for (const n of newNodes) nodes.push(n);
-
-      // occasionally draw nearby cross-connections
       if (Math.random() < 0.015 && nodes.length > 5) {
         const a = nodes[Math.floor(Math.random() * nodes.length)];
         const b = nodes[Math.floor(Math.random() * nodes.length)];
@@ -365,17 +515,13 @@
           }
         }
       }
-
-      // cap to avoid slowdown
       if (nodes.length > 350) nodes.splice(0, nodes.length - 350);
       if (connections.length > 700) connections.splice(0, connections.length - 700);
-
       animFrame = requestAnimationFrame(loop);
     }
 
     window.addEventListener('resize', () => {
       resize();
-      // reposition root node to stay centered
       if (nodes.length > 0) {
         nodes[0].x = cx;
         nodes[0].y = cy;
