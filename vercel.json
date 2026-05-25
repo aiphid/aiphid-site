@@ -1,7 +1,4 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
-  "redirects": [
-    { "source": "/run-club", "destination": "/register", "permanent": false }
-  ]
+  "trailingSlash": false
 }
