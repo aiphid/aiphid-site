@@ -336,6 +336,11 @@
     .register-success h3 { font-family: var(--f-display); font-size: 28px; margin-bottom: 8px; }
     .register-success p { color: var(--fg-sub); font-size: 14px; }
     .register-rail { margin-top: 20px; display: flex; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.22em; color: var(--fg-muted); text-transform: uppercase; flex-wrap: wrap; }
+    .btn-strava { background: #FC4C02; color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
+    .btn-strava:hover { opacity: 0.9; }
+    .btn-strava:disabled { opacity: 0.6; cursor: default; }
+    .register-or { display: flex; align-items: center; gap: 12px; margin: 20px 0 4px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fg-muted); }
+    .register-or::before, .register-or::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
     /* ─── Footer ─────────────────────────────────────────────────── */
     .foot { background: var(--foot-bg); color: var(--foot-fg); --fg: #f5f5f4; --fg-sub: #9a9a96; --fg-muted: #5a5a56; --border: #1d1d1d; padding: clamp(56px, 7vw, 96px) 0 40px; }
@@ -419,7 +424,7 @@
         <div class="zig zig-bl"></div>
         <div class="zig zig-br"></div>
         <div class="setlist-head">
-          <span class="setlist-mark">OBR.</span>
+          <span class="setlist-mark">DRC.</span>
           <span class="setlist-sub">2026 SEASON</span>
         </div>
         <ul class="setlist-list" id="setlist-cities">
@@ -430,7 +435,7 @@
       <div class="sounded-copy">
         <h2 class="sounded-title">A RUN<br>NEVER<br>SOUNDED<br>SO GOOD.</h2>
         <p>Nine cities. Same crew, same course logic — different parks, different weather, different mix. The route is the warm-up. The finish line is the after-party.</p>
-        <p>Diplo and the OBR residents ride the course on a slow-moving rig. Tempo shifts with the mile splits. You hear the build at the hill, the drop at the finish.</p>
+        <p>Diplo and his resident DJs ride the course on a slow-moving rig. Tempo shifts with the mile splits. You hear the build at the hill, the drop at the finish.</p>
         <div class="sounded-cta">
           <a href="#tour" class="btn btn-secondary">ALL EVENTS</a>
           <a href="#register" class="btn btn-orange">REGISTER NOW</a>
@@ -615,6 +620,14 @@
       </div>
 
       <div>
+        <button type="button" class="btn btn-strava" id="strava-btn" onclick="connectStrava()">
+          <svg width="18" height="18" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+            <path d="M28 8L40 30H16L28 8Z"/>
+            <path d="M40 30L52 8H40L28 30H40Z" opacity="0.55"/>
+          </svg>
+          CONNECT WITH STRAVA
+        </button>
+        <div class="register-or">or join the email list</div>
         <form class="register-form" id="register-form">
           <label>
             <span class="label">EMAIL</span>
@@ -871,6 +884,41 @@ function renderHUD(preset) {
 
 renderHUD('race');
 
+// ─── Supabase + Strava OAuth ────────────────────────────────────────
+const SUPABASE_URL  = 'https://giwysfktknqztpvkkfjm.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_GJqlK9srbBIh-hrEuZHhKg_RQS11ysK';
+let _supabase = null;
+
+async function getSupabase() {
+  if (_supabase) return _supabase;
+  if (!window.supabase) return null;
+  _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  return _supabase;
+}
+
+async function connectStrava() {
+  const btn = document.getElementById('strava-btn');
+  btn.disabled = true;
+  btn.textContent = 'REDIRECTING…';
+  const client = await getSupabase();
+  if (!client) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 64 64" fill="currentColor"><path d="M28 8L40 30H16L28 8Z"/><path d="M40 30L52 8H40L28 30H40Z" opacity="0.55"/></svg> CONNECT WITH STRAVA`;
+    return;
+  }
+  const { error } = await client.auth.signInWithOAuth({
+    provider: 'strava',
+    options: {
+      redirectTo: window.location.origin + '/run-club-success',
+      scopes: 'activity:read_all',
+    },
+  });
+  if (error) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 64 64" fill="currentColor"><path d="M28 8L40 30H16L28 8Z"/><path d="M40 30L52 8H40L28 30H40Z" opacity="0.55"/></svg> CONNECT WITH STRAVA`;
+  }
+}
+
 document.getElementById('panel-tabs').addEventListener('click', (ev) => {
   const btn = ev.target.closest('.panel-tab');
   if (!btn) return;
@@ -902,5 +950,6 @@ document.getElementById('app-mock').innerHTML = `
   </div>
 `;
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </body>
 </html>

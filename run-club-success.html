@@ -219,26 +219,25 @@
       <div class="checkmark-icon">✓</div>
     </div>
 
-    <div class="eyebrow">Registration confirmed</div>
-    <h1>You're <span>in.</span></h1>
-    <p class="subtitle">
-      Check your email for your confirmation and bib number.
-      Race day is going to be special.
+    <div class="eyebrow" id="eyebrow">Strava connected</div>
+    <h1 id="headline">You're <span>in.</span></h1>
+    <p class="subtitle" id="subtitle">
+      You're now part of Diplo's Run Club. Download the app to track your run, see the leaderboard, and stream the after-party live.
     </p>
 
     <div class="next-steps">
       <div class="next-label">What's next</div>
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text"><strong>Check your email</strong> — confirmation + bib number coming in the next few minutes.</div>
+        <div class="step-text" id="step-1"><strong>Strava connected</strong> — your runs will sync automatically after each race.</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-text"><strong>Download the app</strong> — live leaderboard, pace tracker, and after-party livestream.</div>
+        <div class="step-text"><strong>Download the app</strong> — live pace on your Meta Ray-Ban glasses, club leaderboard, and after-party livestream.</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-text"><strong>Show up.</strong> Race day details (start time, parking, corral) in your confirmation email.</div>
+        <div class="step-text"><strong>Show up.</strong> Denver · Jul 12 is the first stop. See you at the start line.</div>
       </div>
     </div>
 
@@ -250,24 +249,60 @@
       Share with a friend
     </button>
 
-    <div class="bib-hint">
-      Your bib number will be emailed to you shortly.
-    </div>
-
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
+    const SUPABASE_URL  = 'https://giwysfktknqztpvkkfjm.supabase.co';
+    const SUPABASE_ANON = 'sb_publishable_GJqlK9srbBIh-hrEuZHhKg_RQS11ysK';
+
+    function applySession(session) {
+      if (!session) return;
+      const meta = session.user.user_metadata || {};
+      const name = meta.name || meta.full_name || meta.preferred_username || null;
+      const avatar = meta.avatar_url || meta.picture || null;
+      const firstName = name ? name.split(' ')[0] : null;
+
+      document.getElementById('eyebrow').textContent = 'Strava connected ✓';
+      if (firstName) {
+        const headline = document.getElementById('headline');
+        headline.textContent = `${firstName}, you're `;
+        const span = document.createElement('span');
+        span.textContent = 'in.';
+        headline.appendChild(span);
+      }
+      const step1 = document.getElementById('step-1');
+      step1.textContent = '';
+      const strong = document.createElement('strong');
+      strong.textContent = 'Strava connected';
+      step1.append(strong, ` — welcome to the club${firstName ? ', ' + firstName : ''}. Your runs sync automatically after each race.`);
+      if (avatar && /^https?:\/\//i.test(avatar)) {
+        const img = document.createElement('img');
+        img.src = avatar;
+        img.alt = name || 'Profile';
+        img.style.cssText = 'width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto 20px;border:2px solid rgba(0,255,148,0.3);display:block;';
+        document.querySelector('.checkmark-wrap').replaceWith(img);
+      }
+    }
+
+    if (window.supabase) {
+      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      client.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') applySession(session);
+      });
+    }
+
     async function handleShare() {
       const data = {
         title: "Diplo's Run Club",
-        text: "Just registered for Diplo's Run Club. Run. Rave. Repeat. — limited spots:",
-        url: 'https://aiphid.com/register',
+        text: "Just joined Diplo's Run Club. Run. Rave. Repeat. — connect Strava:",
+        url: 'https://aiphid.com/run-club',
       };
       try {
         if (navigator.share && navigator.canShare(data)) {
           await navigator.share(data);
         } else {
-          await navigator.clipboard.writeText('https://aiphid.com/register');
+          await navigator.clipboard.writeText('https://aiphid.com/run-club');
           const btn = document.querySelector('.share-btn');
           btn.textContent = 'Link copied!';
           setTimeout(() => { btn.textContent = 'Share with a friend'; }, 2500);
