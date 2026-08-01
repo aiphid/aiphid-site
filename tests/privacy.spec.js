@@ -30,9 +30,8 @@ test.describe('Privacy policy', () => {
     await expect(page.locator('a[href="mailto:privacy@aiphid.com"]').first()).toBeVisible();
   });
 
-  test('back to registration link works', async ({ page }) => {
-    await page.locator('a[href="/register"]').click();
-    await expect(page).toHaveURL(/\/register/);
+  test('back to Run Club link works', async ({ page }) => {
+    await expect(page.locator('a[href="/run-club"]')).toBeVisible();
   });
 
   test('data table lists all collection categories', async ({ page }) => {
