@@ -1,4 +1,8 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/run-club", "destination": "https://run-club-site.vercel.app/run-club" },
+    { "source": "/run-club/:path*", "destination": "https://run-club-site.vercel.app/run-club/:path*" }
+  ]
 }
